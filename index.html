@@ -2,7 +2,7 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bierlon'Dor Abstimmung 2027</title>
+<title>Bierlond'Or Abstimmung 2027</title>
 <meta name="theme-color" content="#0f1216">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,9 +208,9 @@ async function rpc(fn, args){
       headers:{apikey:CONFIG.supabaseKey, Authorization:'Bearer '+CONFIG.supabaseKey, 'Content-Type':'application/json'},
       body: JSON.stringify(args)
     });
-  } catch(e){ throw new Error('Keine Verbindung. Bitte später nochmal versuchen.'); }
+  } catch(e){ throw new Error('Keine Verbindung zur Datenbank. Prüfe supabaseUrl in index.html.'); }
   let j = null; try { j = await r.json(); } catch(e){}
-  if (!r.ok) { const m = j && j.message; throw new Error(MSG[m] || 'Das hat nicht geklappt. Bitte nochmal versuchen.'); }
+  if (!r.ok) { const m = j && j.message; throw new Error(MSG[m] || ('Fehler ' + r.status + ': ' + (m || (j && (j.hint || j.error || j.msg)) || 'unbekannt'))); }
   return j;
 }
 const demo = {
