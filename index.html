@@ -118,8 +118,8 @@ const CONFIG = {
   title: "BIERLOND'OR",
   year: 2027,
   /* Supabase-Zugang (siehe README). Leer lassen = Demo-Modus mit Admin-Passwort "demo". */
-  supabaseUrl: "https://uuqytkqmaebonymtcxmg.supabase.co",
-  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cXl0a3FtYWVib255bXRjeG1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2MDA2NDksImV4cCI6MjEwOTE3NjY0OX0.bBK3uY6VTTJ_wSdR19u8Qo7q16N4QBkirjbkh_5jHWw",
+  supabaseUrl: "",
+  supabaseKey: "",
   categories: [
     {id:"offensiv",  name:"Offensivspieler der Saison", hint:"Tore, Vorlagen, Torgefahr."},
     {id:"defensiv",  name:"Defensivspieler der Saison", hint:"Wer hat hinten dichtgemacht?"},
@@ -127,51 +127,60 @@ const CONFIG = {
     {id:"newcomer",  name:"Newcomer des Jahres",        hint:"Wer hat sich am besten eingelebt?"},
     {id:"spruch",    name:"Spruch des Jahres",          hint:"Wer hat den besten Spruch rausgehauen?"}
   ],
-  players: [
+  /* Wer steht wo zur Wahl: O = nur Offensiv, D = nur Defensiv, B = beide */
+  onlyOffense: [
     "Adin Beganovic",
+    "Benedikt Honold",
+    "Marvin Götte",
+    "Max Beckmann",
+    "Ole Weber",
+    "Philip Brüger",
+    "Robin Spitzer",
+    "Timo Hellmann",
+    "Yannick Marks"
+  ],
+  onlyDefense: [
     "Alen Halilovic",
     "Alexander Brune",
     "Benedict Bald",
     "Benedict Bruder",
-    "Benedikt Honold",
     "Christopher von Schaewen",
-    "Dennis Mrochen",
-    "Dustin Kalthoff",
     "Finn Reiß",
-    "Gerry Nah",
-    "Jonas Sprute",
     "Kevin Hellmann",
     "Lars Wohlgemuth",
-    "Leon Ohde",
     "Luca Honold",
     "Lukas Lengefeld",
+    "Maximilian Schulte",
+    "Nicolas Dähn",
+    "Paul Krüger",
+    "Philipp Monien",
+    "Tim Josephs",
+    "Tobias Rauschenbach"
+  ],
+  /* Nur diese stehen bei "Newcomer des Jahres" zur Wahl */
+  newcomer: ["Dennis Mrochen", "Finn Reiß", "Gerry Nah", "Marcel Opitz", "Mohamed Assakali", "Mohamed El Bachiri", "Pascal Börner"],
+  both: [
+    "Dennis Mrochen",
+    "Dustin Kalthoff",
+    "Gerry Nah",
+    "Jonas Sprute",
+    "Leon Ohde",
     "Marcel Opitz",
     "Marco Peter",
-    "Marvin Götte",
-    "Max Beckmann",
     "Maximilian Andresen",
-    "Maximilian Schulte",
     "Mohamed Assakali",
     "Mohamed El Bachiri",
     "Nico Lichtenthäler",
-    "Nicolas Dähn",
     "Niklas Blöming",
-    "Ole Weber",
     "Pascal Börner",
-    "Paul Krüger",
-    "Philip Brüger",
-    "Philipp Monien",
     "Robin Siegner",
-    "Robin Spitzer",
-    "Tim Josephs",
     "Timo Haase",
-    "Timo Hellmann",
-    "Tobias Rauschenbach",
-    "Tyreese Slacanin",
-    "Yannick Marks"
+    "Tyreese Slacanin"
   ]
 };
 /* ================================================= */
+CONFIG.players = [...CONFIG.onlyOffense, ...CONFIG.onlyDefense, ...CONFIG.both].sort((a,b) => a.localeCompare(b,'de'));
+CONFIG.pools = {offensiv:[...CONFIG.onlyOffense, ...CONFIG.both], defensiv:[...CONFIG.onlyDefense, ...CONFIG.both], newcomer:CONFIG.newcomer};
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -245,7 +254,7 @@ const api = {
 const S = {i:0, role:null, name:'', self:'', picks:{}, err:'', busy:false};
 const steps = ['intro','role','who', ...CONFIG.categories.map(c => 'cat:'+c.id), 'review', 'done'];
 const alreadyVoted = () => { try { return !LIVE ? false : !!localStorage.getItem('bod_voted'); } catch(e){ return false; } };
-const optionsFor = () => CONFIG.players.filter(p => !(S.role==='spieler' && p===S.self));
+const optionsFor = c => (CONFIG.pools[c.id] || CONFIG.players).filter(p => !(S.role==='spieler' && p===S.self)).slice().sort((a,b) => a.localeCompare(b,'de'));
 const roleLabel = r => r==='spieler' ? 'Aktiver Spieler' : 'Fan';
 const who = () => S.role==='spieler' ? S.self : S.name.trim();
 
@@ -282,7 +291,7 @@ function catHTML(c, idx){
   const cur = S.picks[c.id];
   return '<div class="kicker">Kategorie '+(idx+1)+' von '+CONFIG.categories.length+'</div><h2>'+esc(c.name)+'</h2>'+
     '<p class="lead">'+esc(c.hint||'')+'</p>'+
-    '<div class="grid">'+optionsFor().map(p => '<button type="button" class="opt" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(p)+'" aria-pressed="'+(cur===p)+'">'+esc(p)+'</button>').join('')+'</div>'+
+    '<div class="grid">'+optionsFor(c).map(p => '<button type="button" class="opt" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(p)+'" aria-pressed="'+(cur===p)+'">'+esc(p)+'</button>').join('')+'</div>'+
     '<p class="msg" role="alert">'+esc(S.err)+'</p>'+
     '<div class="nav"><button type="button" class="ghost" data-act="back">Zurück</button><button type="button" class="btn" data-act="next">Weiter</button></div>';
 }
