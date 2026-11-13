@@ -1,0 +1,4 @@
+window.BOD_CONFIG = {
+  supabaseUrl: "https://uuqytkqmaebonymtcxmg.supabase.co",
+  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cXl0a3FtYWVib255bXRjeG1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2MDA2NDksImV4cCI6MjEwOTE3NjY0OX0.bBK3uY6VTTJ_wSdR19u8Qo7q16N4QBkirjbkh_5jHWw"
+};
