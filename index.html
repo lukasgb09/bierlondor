@@ -104,6 +104,11 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .sum b{font-weight:700;text-align:right;overflow-wrap:anywhere}
 .done{align-items:center;text-align:center}
 .done .logo{width:90px;height:auto}
+.quote.abs{display:flex;align-items:center;gap:12px;padding:10px 46px 10px 10px}
+.quote.abs .qph{flex:none;width:64px;height:76px;border-radius:8px;object-fit:cover;object-position:top}
+.quote.abs .qph.ph{display:grid;place-items:center;background:var(--bg);color:var(--gold);font:900 24px var(--display)}
+.quote.abs .qtx{display:block;min-width:0}
+.quote.abs .qm{overflow-wrap:anywhere}
 .h2row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .h2row h2{margin:0}
 .infobtn{flex:none;width:34px;height:34px;margin-top:6px;border-radius:50%;border:2px solid var(--gold);background:none;color:var(--gold);font:italic 800 17px/1 Georgia,serif;cursor:pointer}
@@ -204,9 +209,10 @@ const CONFIG = {
     {id:"offensiv",  name:"Offensivspieler der Saison", hint:"Tore, Vorlagen, Torgefahr."},
     {id:"defensiv",  name:"Defensivspieler der Saison", hint:"Wer hat hinten dichtgemacht?"},
     {id:"ausrede",   name:"Sprücheklopfer des Jahres",     hint:"Große Klappe, immer einen Spruch parat."},
-    {id:"absage",    name:"Absage des Jahres",          hint:"Wer hat am häufigsten oder dreistesten abgesagt?"},
+    {id:"absage",    name:"Absage des Jahres",          hint:"Die beste Absage aus der SpielerPlus-App."},
     {id:"newcomer",  name:"Newcomer des Jahres",        hint:"Wer hat sich am besten eingelebt?"},
-    {id:"spruch",    name:"Spruch des Jahres",          hint:"Wer hat den besten Spruch rausgehauen?"}
+    {id:"spruch",    name:"Spruch des Jahres",          hint:"Wer hat den besten Spruch rausgehauen?"},
+    {id:"fahrt",     name:"Mannschaftsfahrtaktion 2026",  hint:"Das beste Ereignis der diesjährigen Mannschaftsfahrt."}
   ],
   /* Wer steht wo zur Wahl: O = nur Offensiv, D = nur Defensiv, B = beide */
   onlyOffense: [
@@ -239,6 +245,25 @@ const CONFIG = {
     "Tobias Rauschenbach"
   ],
   /* Fotos: Name aus der Liste -> Datei im Ordner fotos. Wer fehlt, bekommt ein Platzhalter-Feld. */
+  fahrt: [
+    "Niggo und der sprechende Besen",
+    "No Crissek, no cry!",
+    "Lauf Siegel! Lauf! Die Flucht vor Salten",
+    "Marco und die schäumende Spülmaschine",
+    "Kuhlmann und der Gin",
+    "Lars Mülleimer"
+  ],
+  absagen: [
+    {p:"Nico Lichtenthäler", t:"wieder/immer noch krank ich checks nicht"},
+    {p:"Jonas Sprute", t:"der immernoch verschleimte boss"},
+    {p:"Benedikt Honold", t:"Hochzeit klärt das mit meiner frau"},
+    {p:"Robin Siegner", t:"Fuß dick,blau, schmerzt und dann wundert er sich wieso man ihn opi nennt"},
+    {p:"Niklas Blöming", t:"dritter hoden am fuß gewachsen"},
+    {p:"Timo Hellmann", t:"aushelfen bei der 1. mannschaft"},
+    {p:"Robin Siegner", t:"Schonwaschgang"},
+    {p:"Maximilian Schulte", t:"richtige brandwunde am arsch, sifft wie sau"},
+    {p:"Jonas Sprute", t:"nachmittags impfung (Bill gates Chip), bin vvlt knocked"}
+  ],
   sprueche: [
     {date:"29.03.", lines:[["Domme","Du kommst aus dem Dschungel, Abfahrt."]], note:"Domme zu Spitzer"},
     {date:"26.04.", lines:[["Antje","Zieh dich wieder an, Pöppi."],["Pöppi","Ich bin frisch rasiert unter den Achseln."]]},
@@ -390,8 +415,9 @@ const INFOS = {
   offensiv:['Offensivspieler der Saison','Wer hat vorne den Unterschied gemacht? Es zählen Tore, Vorlagen und Torgefahr. Wähle den Spieler, der die Offensive 2026 geprägt hat.'],
   defensiv:['Defensivspieler der Saison','Wer hat hinten dichtgemacht? Es zählen Zweikämpfe, Rettungstaten und Zuverlässigkeit. Wähle den Mann, an dem keiner vorbeikam.'],
   ausrede:['Sprücheklopfer des Jahres','Wer hat die größte Klappe und haut die meisten Sprüche raus, auf dem Platz und in der Kabine? Gewählt wird die Person, nicht der einzelne Spruch.'],
-  absage:['Absage des Jahres','Wer hat am häufigsten oder dreistesten abgesagt? Ob Rücken, Oma oder „Termin vergessen“: Wähle den Meister der Absage.'],
+  absage:['Absage des Jahres','Hier wählst du die beste Absage der Saison aus der SpielerPlus-App. Es geht um die Absage selbst, nicht um die Person.'],
   newcomer:['Newcomer des Jahres','Wer ist neu dabei und hat sich am besten eingelebt? Es stehen nur die Neuzugänge dieser Saison zur Wahl.'],
+  fahrt:['Mannschaftsfahrtaktion 2026','Das beste Ereignis der diesjährigen Mannschaftsfahrt. Wähle die Aktion, über die am meisten gelacht wurde.'],
   spruch:['Spruch des Jahres','Hier wählst du den besten Spruch oder Dialog der Saison 2026. Es geht um den Spruch selbst, nicht um die Person.']
 };
 function showInfo(cid){
@@ -486,7 +512,19 @@ function applySearch(q){
   const e = $('noHit'); if (e) e.hidden = shown > 0;
 }
 const spLabel = q => q.lines.map(l => l[0]+': „'+l[1]+'“').join(' / ');
-const isQuote = c => c.id === 'spruch';
+const isQuote = c => c.id === 'spruch' || c.id === 'absage' || c.id === 'fahrt';
+function fahrtHTML(c, t, cur){
+  const hay = fold(t)+' '+fold2(t);
+  return '<button type="button" class="quote" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(t)+'" data-n="'+esc(hay)+'" aria-pressed="'+(cur===t)+'"><span class="qm"><b>'+esc(t)+'</b></span><span class="chk" aria-hidden="true">&#10003;</span></button>';
+}
+function absageHTML(c, a, cur){
+  const v = a.p+': „'+a.t+'“';
+  const hay = fold(v)+' '+fold2(v);
+  const img = CONFIG.photos[a.p];
+  return '<button type="button" class="quote abs" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(v)+'" data-n="'+esc(hay)+'" aria-pressed="'+(cur===v)+'">'+
+    (img ? '<img class="qph" src="'+esc(img)+'" alt="" loading="lazy" decoding="async">' : '<span class="qph ph">'+esc(initials(a.p))+'</span>')+
+    '<span class="qtx"><span class="qm"><b>'+esc(a.p)+'</b></span><span class="qm">„'+esc(a.t)+'“</span></span><span class="chk" aria-hidden="true">&#10003;</span></button>';
+}
 function quoteHTML(c, q, cur){
   const v = spLabel(q);
   const hay = fold(v+' '+q.date+' '+(q.note||''))+' '+fold2(v);
@@ -505,10 +543,10 @@ function catHTML(c, idx){
   const cur = S.picks[c.id];
   return '<div class="kicker">Kategorie '+(idx+1)+' von '+CONFIG.categories.length+'</div><div class="h2row"><h2>'+esc(c.name)+'</h2><button type="button" class="infobtn" data-act="info" data-cat="'+esc(c.id)+'" aria-label="Worum geht es in dieser Kategorie?">i</button></div>'+
     '<p class="lead">'+esc(c.hint||'')+'</p>'+
-    '<input type="search" id="fSearch" class="search" placeholder="'+(isQuote(c)?'Spruch suchen':'Spieler suchen')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchen">'+
-    (isQuote(c) ? '<div class="qlist">'+CONFIG.sprueche.map(q => quoteHTML(c, q, cur)).join('')+'</div>'
+    '<input type="search" id="fSearch" class="search" placeholder="'+(c.id==='spruch'?'Spruch suchen':c.id==='absage'?'Absage oder Spieler suchen':c.id==='fahrt'?'Aktion suchen':'Spieler suchen')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchen">'+
+    (isQuote(c) ? '<div class="qlist">'+(c.id==='absage' ? CONFIG.absagen.map(a => absageHTML(c, a, cur)) : c.id==='fahrt' ? CONFIG.fahrt.map(t => fahrtHTML(c, t, cur)) : CONFIG.sprueche.map(q => quoteHTML(c, q, cur))).join('')+'</div>'
                 : '<div class="grid">'+optionsFor(c).map(p => optHTML(c, p, cur)).join('')+'</div>')+
-    '<p class="small" id="noHit" hidden>'+(isQuote(c)?'Kein Spruch gefunden.':'Kein Spieler gefunden.')+'</p>'+
+    '<p class="small" id="noHit" hidden>'+(c.id==='spruch'?'Kein Spruch gefunden.':c.id==='absage'?'Keine Absage gefunden.':c.id==='fahrt'?'Keine Aktion gefunden.':'Kein Spieler gefunden.')+'</p>'+
     '<p class="msg" role="alert">'+esc(S.err)+'</p>'+
     '<div class="nav"><button type="button" class="ghost" data-act="back">Zurück</button><button type="button" class="btn" data-act="next">Weiter</button></div>';
 }
