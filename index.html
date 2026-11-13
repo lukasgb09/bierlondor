@@ -104,6 +104,18 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .sum b{font-weight:700;text-align:right;overflow-wrap:anywhere}
 .done{align-items:center;text-align:center}
 .done .logo{width:90px;height:auto}
+.h2row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.h2row h2{margin:0}
+.infobtn{flex:none;width:34px;height:34px;margin-top:6px;border-radius:50%;border:2px solid var(--gold);background:none;color:var(--gold);font:italic 800 17px/1 Georgia,serif;cursor:pointer}
+.infobtn:hover{background:rgba(227,171,40,.15)}
+.imodal{position:fixed;inset:0;z-index:30;background:rgba(10,12,15,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;animation:ifade .25s ease both}
+.icard{width:100%;max-width:420px;background:var(--bg);border:2px solid var(--gold);border-radius:18px;padding:24px 20px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;animation:ipop .4s cubic-bezier(.2,.9,.3,1.2) both}
+.icard .logo{width:64px;height:auto}
+.icard h3{margin:0;font:900 28px/1.1 var(--display);text-transform:uppercase}
+.icard p{margin:0 0 6px;font:500 16px/1.5 var(--body);color:var(--muted)}
+@keyframes ifade{from{opacity:0}to{opacity:1}}
+@keyframes ipop{from{opacity:0;transform:translateY(18px) scale(.92)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.imodal,.icard{animation:none}}
 .overlay{position:fixed;inset:0;z-index:20;background:rgba(10,12,15,.88);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(20px,env(safe-area-inset-top,0px)) 16px 40px}
 .sheet{width:100%;max-width:640px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:6vh;display:flex;flex-direction:column;gap:14px}
 .sheet.wide{margin-top:0}
@@ -191,7 +203,7 @@ const CONFIG = {
   categories: [
     {id:"offensiv",  name:"Offensivspieler der Saison", hint:"Tore, Vorlagen, Torgefahr."},
     {id:"defensiv",  name:"Defensivspieler der Saison", hint:"Wer hat hinten dichtgemacht?"},
-    {id:"ausrede",   name:"Ausredenweltmeister",        hint:"Der Platz war zu hart, der Ball zu rund."},
+    {id:"ausrede",   name:"Sprücheklopfer des Jahres",     hint:"Große Klappe, immer einen Spruch parat."},
     {id:"absage",    name:"Absage des Jahres",          hint:"Wer hat am häufigsten oder dreistesten abgesagt?"},
     {id:"newcomer",  name:"Newcomer des Jahres",        hint:"Wer hat sich am besten eingelebt?"},
     {id:"spruch",    name:"Spruch des Jahres",          hint:"Wer hat den besten Spruch rausgehauen?"}
@@ -374,7 +386,27 @@ const api = {
 };
 
 /* ---------- Ablauf ---------- */
-const S = {ob:0, i:0, role:null, name:'', self:'', picks:{}, err:'', busy:false};
+const INFOS = {
+  offensiv:['Offensivspieler der Saison','Wer hat vorne den Unterschied gemacht? Es zählen Tore, Vorlagen und Torgefahr. Wähle den Spieler, der die Offensive 2026 geprägt hat.'],
+  defensiv:['Defensivspieler der Saison','Wer hat hinten dichtgemacht? Es zählen Zweikämpfe, Rettungstaten und Zuverlässigkeit. Wähle den Mann, an dem keiner vorbeikam.'],
+  ausrede:['Sprücheklopfer des Jahres','Wer hat die größte Klappe und haut die meisten Sprüche raus, auf dem Platz und in der Kabine? Gewählt wird die Person, nicht der einzelne Spruch.'],
+  absage:['Absage des Jahres','Wer hat am häufigsten oder dreistesten abgesagt? Ob Rücken, Oma oder „Termin vergessen“: Wähle den Meister der Absage.'],
+  newcomer:['Newcomer des Jahres','Wer ist neu dabei und hat sich am besten eingelebt? Es stehen nur die Neuzugänge dieser Saison zur Wahl.'],
+  spruch:['Spruch des Jahres','Hier wählst du den besten Spruch oder Dialog der Saison 2026. Es geht um den Spruch selbst, nicht um die Person.']
+};
+function showInfo(cid){
+  const d = INFOS[cid]; if (!d) return;
+  closeInfo();
+  const el = document.createElement('div'); el.id = 'infoModal'; el.className = 'imodal';
+  el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true');
+  el.innerHTML = '<div class="icard"><img class="logo" src="pokal-klein.webp" alt=""><div class="kicker">Worum geht’s?</div><h3>'+esc(d[0])+'</h3><p>'+esc(d[1])+'</p><button type="button" class="btn full" id="infoOk">Verstanden</button></div>';
+  document.body.appendChild(el);
+  el.addEventListener('click', e => { if (e.target === el) closeInfo(); });
+  $('infoOk').onclick = closeInfo; $('infoOk').focus();
+}
+function closeInfo(){ const e = $('infoModal'); if (e) e.remove(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfo(); });
+const S = {seen:{}, ob:0, i:0, role:null, name:'', self:'', picks:{}, err:'', busy:false};
 const steps = ['intro','onb','role','who', ...CONFIG.categories.map(c => 'cat:'+c.id), 'review', 'done'];
 const iRole = steps.indexOf('role'), iWho = steps.indexOf('who'), iCat = steps.indexOf('cat:'+CONFIG.categories[0].id);
 const votedName = () => { try { return localStorage.getItem('bod_voted') || ''; } catch(e){ return ''; } };
@@ -471,7 +503,7 @@ function optHTML(c, p, cur){
 }
 function catHTML(c, idx){
   const cur = S.picks[c.id];
-  return '<div class="kicker">Kategorie '+(idx+1)+' von '+CONFIG.categories.length+'</div><h2>'+esc(c.name)+'</h2>'+
+  return '<div class="kicker">Kategorie '+(idx+1)+' von '+CONFIG.categories.length+'</div><div class="h2row"><h2>'+esc(c.name)+'</h2><button type="button" class="infobtn" data-act="info" data-cat="'+esc(c.id)+'" aria-label="Worum geht es in dieser Kategorie?">i</button></div>'+
     '<p class="lead">'+esc(c.hint||'')+'</p>'+
     '<input type="search" id="fSearch" class="search" placeholder="'+(isQuote(c)?'Spruch suchen':'Spieler suchen')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchen">'+
     (isQuote(c) ? '<div class="qlist">'+CONFIG.sprueche.map(q => quoteHTML(c, q, cur)).join('')+'</div>'
@@ -510,6 +542,7 @@ function render(){
   $('stage').innerHTML = '<div class="step">'+html+'</div>';
   const hide = id === 'intro' || id === 'onb' || id === 'done';
   $('top').dataset.hide = hide ? '1' : '0';
+  if (id.startsWith('cat:')) { const cid = id.slice(4); if (!S.seen[cid]) { S.seen[cid] = 1; showInfo(cid); } }
   $('barI').style.width = Math.round((S.i - iRole) / (steps.length - iRole - 2) * 100) + '%';
 }
 function go(i){ S.i = Math.max(0, Math.min(steps.length-1, i)); S.err = ''; render(); window.scrollTo(0, 0); }
@@ -566,6 +599,7 @@ $('stage').addEventListener('click', e => {
   else if (a === 'dot') { S.ob = parseInt(b.dataset.k, 10); render(); }
   else if (a === 'jump') go(parseInt(b.dataset.i, 10));
   else if (a === 'pokal') pokalTap(b);
+  else if (a === 'info') showInfo(b.dataset.cat);
   else if (a === 'submit') submit();
 });
 
