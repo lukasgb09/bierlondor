@@ -2,7 +2,7 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bierlond'Or Abstimmung 2027</title>
+<title>Bierlond'Or Abstimmung 2026</title>
 <meta name="theme-color" content="#0f1216">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
 *{box-sizing:border-box}
 html{background:var(--bg)}
 body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.10}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.14}
 #glow{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60% 45% at 50% 38%,rgba(227,171,40,.10),transparent 70%)}
 #app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
   padding-top:max(14px,env(safe-area-inset-top,0px));padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
@@ -39,11 +39,16 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:16px/1.
 h1,h2{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.95;margin:0;text-wrap:balance}
 h2{font-size:clamp(38px,11vw,56px)}
 .lead{color:var(--muted);margin:0}
-.intro{align-items:center;text-align:center;gap:6px}
+.intro{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
 .intro h1{font-size:clamp(44px,12.5vw,92px);letter-spacing:0}
 .intro .sub{font-family:var(--display);font-weight:800;font-size:clamp(20px,6vw,30px);letter-spacing:.34em;text-indent:.34em;color:var(--gold)}
-.pokal{display:block;width:auto;max-width:min(80vw,330px);height:min(50vh,430px);object-fit:contain;margin:8px 0 12px;-webkit-mask-image:radial-gradient(ellipse 52% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 52% 50% at 50% 50%,#000 62%,transparent 100%);animation:float 5s ease-in-out infinite}
+.pokalbtn{display:block;background:none;border:0;padding:0;margin:6px 0 0;cursor:pointer;perspective:700px;animation:float 5s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+.pokal{display:block;width:auto;max-width:min(78vw,300px);height:min(42vh,380px);object-fit:contain;pointer-events:none}
+.pokal.spin{animation:spin .95s cubic-bezier(.25,.7,.2,1)}
 @keyframes float{50%{transform:translateY(-6px)}}
+@keyframes spin{0%{transform:rotateY(0) scale(1)}45%{transform:rotateY(200deg) scale(1.12)}100%{transform:rotateY(360deg) scale(1)}}
+.pokaltxt{min-height:1.5em;margin:0;color:var(--gold);font-weight:600;font-size:15px;transition:opacity .3s}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:15}
 .btn{font:800 22px var(--display);letter-spacing:.08em;text-transform:uppercase;padding:15px 26px;border:0;border-radius:12px;background:var(--gold);color:var(--ink);cursor:pointer;min-width:200px;transition:transform .15s,background .15s}
 .btn:hover{background:var(--gold-hi)}
 .btn:active{transform:scale(.98)}
@@ -60,7 +65,7 @@ h2{font-size:clamp(38px,11vw,56px)}
 .big[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:13px;font-weight:600;color:var(--muted)}
-input[type=text],input[type=tel],select,input[type=password]{width:100%;font:500 17px var(--body);padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+input[type=text],input[type=tel],input[type=search],select,input[type=password]{width:100%;font:500 17px var(--body);padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
 .small{font-size:13px;color:var(--muted);margin:0}
 .msg{margin:0;color:var(--warn);font-size:14px;min-height:1.2em}
@@ -68,6 +73,29 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .opt{padding:14px 10px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:600 16px var(--body);cursor:pointer;text-align:center;overflow-wrap:anywhere;transition:border-color .15s,background .15s}
 .opt:hover{border-color:var(--steel)}
 .opt[aria-pressed="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.search{-webkit-appearance:none;appearance:none}
+.tile{position:relative;aspect-ratio:25/30;padding:0;border:2px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s,opacity .15s;display:block;width:100%}
+.tile img{display:block;width:100%;height:100%;object-fit:cover}
+.tile:hover{border-color:var(--steel)}
+.tile:active{transform:scale(.98)}
+.tile .chk{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font:800 16px/28px var(--body);text-align:center;opacity:0;transform:scale(.6);transition:opacity .15s,transform .15s}
+.tile[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.tile[aria-pressed="true"] .chk{opacity:1;transform:none}
+.tile.ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--fg);font:700 16px var(--body);text-align:center;padding:10px}
+.tile.ph b{font:900 56px/1 var(--display);color:var(--gold)}
+.tile.ph span:not(.chk){overflow-wrap:anywhere}
+.qlist{display:flex;flex-direction:column;gap:10px}
+.quote{position:relative;text-align:left;width:100%;padding:14px 48px 14px 14px;border:2px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);font:500 16px/1.4 var(--body);cursor:pointer;transition:border-color .15s,transform .15s}
+.quote:hover{border-color:var(--steel)}
+.quote:active{transform:scale(.99)}
+.quote .qm{display:block;margin:0 0 6px}
+.quote .qm:last-of-type{margin-bottom:0}
+.quote .qm b{color:var(--gold);font-weight:800}
+.quote .qd{display:block;margin-top:10px;font-size:12px;opacity:.65}
+.quote .chk{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font:800 16px/28px var(--body);text-align:center;opacity:0;transform:scale(.6);transition:opacity .15s,transform .15s}
+.quote[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.quote[aria-pressed="true"] .chk{opacity:1;transform:none}
+@media (min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
 .sum{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
 .sum button{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-align:left;padding:12px 14px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--fg);font:500 16px var(--body);cursor:pointer}
 .sum button:last-child{border-bottom:0}
@@ -85,6 +113,16 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .stat div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .stat b{display:block;font:900 36px var(--display);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
 .stat small{color:var(--muted);font-size:13px}
+.chips{display:flex;gap:8px}
+.chips button{flex:1;padding:9px 6px;border:2px solid var(--line);border-radius:10px;background:none;color:var(--fg);font:700 14px var(--body);cursor:pointer}
+.chips button.on{border-color:var(--gold);background:rgba(227,171,40,.12);color:var(--gold)}
+.res.win{border-color:var(--gold)}
+.wrow{display:flex;flex-direction:column;gap:2px;padding:9px 0;border-bottom:1px solid var(--line)}
+.wrow small{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.wrow b{font:800 20px var(--body);color:var(--gold)}
+.wrow span{font-size:13px;color:var(--muted)}
+.wrow em{font-style:normal;color:#ff8a7a;font-weight:700}
+.arow{display:flex;gap:8px;margin-top:12px}.arow button{flex:1}
 .res{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
 .res h4{margin:0 0 6px;font:800 22px var(--display);text-transform:uppercase}
 .tally{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;margin:8px 0;font-variant-numeric:tabular-nums}
@@ -99,7 +137,36 @@ th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
 .del{font:600 13px var(--body);padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--warn);cursor:pointer}
 .tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(227,171,40,.15);color:var(--gold)}
 [hidden]{display:none!important}
-@media (prefers-reduced-motion:reduce){.step,.pokal{animation:none}.bar i{transition:none}}
+.evt{margin:0;text-align:center;font:600 14px var(--body);color:var(--gold);opacity:.9}
+.endcard{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;margin-top:10px;padding:16px;border:2px solid var(--gold);border-radius:14px;background:var(--panel);animation:in .6s .3s cubic-bezier(.2,.7,.2,1) both}
+.endcard b{font:900 24px/1.1 var(--display);text-transform:uppercase}
+.endcard span{font:500 15px/1.4 var(--body)}
+.endcard .gw{margin-top:8px;padding-top:10px;border-top:1px solid var(--line)}
+.endcard .gw i{font-style:normal;font-weight:800;color:var(--gold);margin-right:4px}
+.onb{display:flex;flex-direction:column;gap:14px;padding-top:6vh}
+.ob-art{height:190px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.ob-steps{display:flex;flex-direction:column;gap:10px;width:100%}
+.ob-st{display:flex;align-items:center;gap:14px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--panel);font:700 17px var(--body);opacity:0;animation:obin .5s cubic-bezier(.2,.7,.2,1) var(--d) forwards}
+.ob-st b{width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font:900 16px var(--display)}
+@keyframes obin{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+.ob-tiles{position:relative;display:flex;gap:10px;width:100%;justify-content:center}
+.ob-tile{position:relative;width:30%;aspect-ratio:25/30;max-width:110px;border:2px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.ob-tile i{position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,0))}
+.ob-tile.pick{animation:obpick 3s ease-in-out infinite}
+.ob-tile .chk{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--ink);font:800 14px/24px var(--body);text-align:center;animation:obchk 3s ease-in-out infinite}
+@keyframes obpick{0%,35%{border-color:var(--line);box-shadow:none}45%,90%{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}100%{border-color:var(--line);box-shadow:none}}
+@keyframes obchk{0%,35%{opacity:0;transform:scale(.5)}45%,90%{opacity:1;transform:none}100%{opacity:0;transform:scale(.5)}}
+.ob-hand{position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 0 0 8px rgba(255,255,255,.2);left:70%;top:110%;animation:obhand 3s ease-in-out infinite}
+@keyframes obhand{0%{left:75%;top:115%;opacity:0}15%{opacity:1}35%{left:50%;top:55%;transform:scale(1)}40%{transform:scale(.8)}50%{transform:scale(1)}85%{opacity:1}100%{left:50%;top:55%;opacity:0}}
+.ob-lock{position:relative;display:grid;place-items:center;width:170px;height:170px}
+.ob-lock img{width:110px;height:auto;position:relative;animation:float 3s ease-in-out infinite}
+.ob-ring{position:absolute;inset:10px;border:2px solid var(--gold);border-radius:50%;opacity:0;animation:obring 3s ease-out infinite}
+.ob-ring.r2{animation-delay:1.5s}
+@keyframes obring{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.25);opacity:0}}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.dots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:var(--line);cursor:pointer;transition:width .25s,background .25s}
+.dots button.on{width:26px;border-radius:5px;background:var(--gold)}
+@media (prefers-reduced-motion:reduce){.ob-st{animation:none;opacity:1}.ob-tile.pick,.ob-tile .chk,.ob-hand,.ob-ring,.ob-lock img{animation:none}.ob-tile.pick{border-color:var(--gold)}.ob-tile .chk{opacity:1}.ob-hand,.ob-ring{display:none}.step,.pokalbtn,.pokal.spin{animation:none}.bar i{transition:none}}
 </style>
 
 <div id="bg"></div><div id="glow"></div>
@@ -112,18 +179,20 @@ th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
 </div>
 <div id="overlay" class="overlay" hidden></div>
 
+<script src="config.js"></script>
 <script>
 /* ================= HIER ANPASSEN ================= */
 const CONFIG = {
   title: "BIERLOND'OR",
-  year: 2027,
-  /* Supabase-Zugang (siehe README). Leer lassen = Demo-Modus mit Admin-Passwort "demo". */
-  supabaseUrl: "https://uuqytkqmaebonymtcxmg.supabase.co",
-  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cXl0a3FtYWVib255bXRjeG1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2MDA2NDksImV4cCI6MjEwOTE3NjY0OX0.bBK3uY6VTTJ_wSdR19u8Qo7q16N4QBkirjbkh_5jHWw",
+  year: 2026,
+  /* Supabase-Zugang steht in config.js (siehe README). Ohne config.js läuft der Demo-Modus mit Admin-Passwort "demo". */
+  supabaseUrl: (window.BOD_CONFIG && window.BOD_CONFIG.supabaseUrl) || "",
+  supabaseKey: (window.BOD_CONFIG && window.BOD_CONFIG.supabaseKey) || "",
   categories: [
     {id:"offensiv",  name:"Offensivspieler der Saison", hint:"Tore, Vorlagen, Torgefahr."},
     {id:"defensiv",  name:"Defensivspieler der Saison", hint:"Wer hat hinten dichtgemacht?"},
     {id:"ausrede",   name:"Ausredenweltmeister",        hint:"Der Platz war zu hart, der Ball zu rund."},
+    {id:"absage",    name:"Absage des Jahres",          hint:"Wer hat am häufigsten oder dreistesten abgesagt?"},
     {id:"newcomer",  name:"Newcomer des Jahres",        hint:"Wer hat sich am besten eingelebt?"},
     {id:"spruch",    name:"Spruch des Jahres",          hint:"Wer hat den besten Spruch rausgehauen?"}
   ],
@@ -157,8 +226,62 @@ const CONFIG = {
     "Tim Josephs",
     "Tobias Rauschenbach"
   ],
+  /* Fotos: Name aus der Liste -> Datei im Ordner fotos. Wer fehlt, bekommt ein Platzhalter-Feld. */
+  sprueche: [
+    {date:"29.03.", lines:[["Domme","Du kommst aus dem Dschungel, Abfahrt."]], note:"Domme zu Spitzer"},
+    {date:"26.04.", lines:[["Antje","Zieh dich wieder an, Pöppi."],["Pöppi","Ich bin frisch rasiert unter den Achseln."]]},
+    {date:"25.05.", lines:[["Knauf","Es ist doch schon alles gelaufen. Wir knallen uns heute einen rein und haben dabei alle das Gleiche an."]], note:"Antwort auf die Frage, ob er heute Bock hat"},
+    {date:"13.06.", lines:[["Rocky","Antje, ich habe nur einen Schlüssel dabei."],["Antje","Welchen?"],["Rocky","Ja, meiner."]]},
+    {date:"07.07.", lines:[["Burner","Wie, es gibt kein Bier mehr? Ich lass mich doch nicht anderthalb Stunden ficken und bekomm dann kein Bier."]]},
+    {date:"04.10.", lines:[["Bene's Schwiegervater","Brot kann schimmeln, was kann Bene?"]]},
+    {date:"04.10.", lines:[["Hendrik","Schiri, das ist ein Kontaktsport!"]]},
+    {date:"08.11.", lines:[["Carsten","Geh von der Box weg, das stört den Ton."],["Pöppi","Ich will doch nur ein bisschen Vibration spüren."]]}
+  ],
+  photos: {
+    "Adin Beganovic": "fotos/adin-beganovic.webp",
+    "Alen Halilovic": "fotos/alen-halilovic.webp",
+    "Alexander Brune": "fotos/alexander-brune.webp",
+    "Benedict Bald": "fotos/benedict-bald.webp",
+    "Benedict Bruder": "fotos/benedict-bruder.webp",
+    "Christopher von Schaewen": "fotos/christopher-von-schaewen.webp",
+    "Dennis Mrochen": "fotos/dennis-mrochen.webp",
+    "Finn Reiß": "fotos/finn-reiss.webp",
+    "Jonas Sprute": "fotos/jonas-sprute.webp",
+    "Kevin Hellmann": "fotos/kevin-hellmann.webp",
+    "Lars Wohlgemuth": "fotos/lars-wohlgemuth.webp",
+    "Leon Ohde": "fotos/leon-ohde.webp",
+    "Luca Honold": "fotos/luca-honold.webp",
+    "Lukas Lengefeld": "fotos/lukas-lengefeld.webp",
+    "Marco Peter": "fotos/marco-peter.webp",
+    "Max Beckmann": "fotos/max-beckmann.webp",
+    "Maximilian Andresen": "fotos/maximilian-andresen.webp",
+    "Maximilian Schulte": "fotos/maximilian-schulte.webp",
+    "Nico Lichtenthäler": "fotos/nico-lichtenthaeler.webp",
+    "Nicolas Dähn": "fotos/nicolas-daehn.webp",
+    "Niklas Blöming": "fotos/niklas-bloeming.webp",
+    "Ole Weber": "fotos/ole-weber.webp",
+    "Philip Brüger": "fotos/philip-brueger.webp",
+    "Philipp Monien": "fotos/philipp-monien.webp",
+    "Robin Spitzer": "fotos/robin-spitzer.webp",
+    "Tim Josephs": "fotos/tim-josephs.webp",
+    "Timo Hellmann": "fotos/timo-hellmann.webp",
+    "Tobias Rauschenbach": "fotos/tobias-rauschenbach.webp",
+    "Tyreese Slacanin": "fotos/tyreese-slacanin.webp",
+    "Yannick Marks": "fotos/yannick-marks.webp",
+    "Marvin Götte": "fotos/marvin-goette.webp",
+    "Paul Krüger": "fotos/paul-krueger.webp",
+    "Pascal Börner": "fotos/pascal-boerner.webp",
+    "Gerry Nah": "fotos/gerry-nah.webp",
+    "Timo Haase": "fotos/timo-haase.webp",
+    "Mohamed Assakali": "fotos/mohamed-assakali.webp",
+    "Mohamed El Bachiri": "fotos/mohamed-el-bachiri.webp",
+    "Marcel Opitz": "fotos/marcel-opitz.webp",
+    "Benedikt Honold": "fotos/benedikt-honold.webp",
+    "Dustin Kalthoff": "fotos/dustin-kalthoff.webp",
+    "Robin Siegner": "fotos/robin-siegner.webp"
+  },
   /* Nur diese stehen bei "Newcomer des Jahres" zur Wahl */
-  newcomer: ["Dennis Mrochen", "Finn Reiß", "Gerry Nah", "Marcel Opitz", "Mohamed Assakali", "Mohamed El Bachiri", "Pascal Börner"],
+  newcomer: ["Dennis Mrochen", "Finn Reiß", "Gerry Nah", "Marcel Opitz", "Mohamed Assakali", "Mohamed El Bachiri", "Pascal Börner", "Tyreese Slacanin"],
   both: [
     "Dennis Mrochen",
     "Dustin Kalthoff",
@@ -193,7 +316,7 @@ function bgPattern(){
   const frag = document.createDocumentFragment();
   for (let r = 0, y = -10; y < h + sy; r++, y += sy) {
     for (let x = (r % 2 ? sx/2 : 0) - 20; x < w + sx; x += sx) {
-      const im = new Image(); im.src = 'pokal-logo.png'; im.alt = ''; im.decoding = 'async';
+      const im = new Image(); im.src = 'pokal-klein.webp'; im.alt = ''; im.decoding = 'async';
       im.style.cssText = 'position:absolute;left:'+x+'px;top:'+y+'px;width:36px;height:auto;transform:rotate('+(r % 2 ? 9 : -9)+'deg)';
       frag.appendChild(im);
     }
@@ -251,21 +374,52 @@ const api = {
 };
 
 /* ---------- Ablauf ---------- */
-const S = {i:0, role:null, name:'', self:'', picks:{}, err:'', busy:false};
-const steps = ['intro','role','who', ...CONFIG.categories.map(c => 'cat:'+c.id), 'review', 'done'];
-const alreadyVoted = () => { try { return !LIVE ? false : !!localStorage.getItem('bod_voted'); } catch(e){ return false; } };
+const S = {ob:0, i:0, role:null, name:'', self:'', picks:{}, err:'', busy:false};
+const steps = ['intro','onb','role','who', ...CONFIG.categories.map(c => 'cat:'+c.id), 'review', 'done'];
+const iRole = steps.indexOf('role'), iWho = steps.indexOf('who'), iCat = steps.indexOf('cat:'+CONFIG.categories[0].id);
+const votedName = () => { try { return localStorage.getItem('bod_voted') || ''; } catch(e){ return ''; } };
+const clearVoted = () => { try { localStorage.removeItem('bod_voted'); } catch(e){} };
 const optionsFor = c => (CONFIG.pools[c.id] || CONFIG.players).filter(p => !(S.role==='spieler' && p===S.self)).slice().sort((a,b) => a.localeCompare(b,'de'));
 const roleLabel = r => r==='spieler' ? 'Aktiver Spieler' : 'Fan';
 const who = () => S.role==='spieler' ? S.self : S.name.trim();
 
 function introHTML(){
   return '<div class="intro">'+
-    '<div class="kicker">Die Preisverleihung</div>'+
+    '<div class="kicker">4. Auflage · HSC II Weihnachtsfeier</div>'+
     '<h1>'+esc(CONFIG.title)+'</h1>'+
     '<div class="sub">ABSTIMMUNG '+CONFIG.year+'</div>'+
+    '<button type="button" class="pokalbtn" data-act="pokal" aria-label="Pokal antippen"><img class="pokal" src="pokal-start.webp" alt="Pokal BIERLOND&#39;OR '+CONFIG.year+'"></button>'+
+    '<p class="pokaltxt" id="pokalTxt" aria-live="polite">&nbsp;</p>'+
+    '<p class="evt">Verleihung am 04.12.2026 · Motto: Weihnachtssweater</p>'+
     '<button type="button" class="btn" style="margin-top:36px" data-act="next">Los geht’s</button>'+
     (LIVE ? '' : '<p class="small">Demo-Modus: Stimmen bleiben nur in diesem Browser.</p>')+
   '</div>';
+}
+
+function onbHTML(){
+  const slides = [
+    {k:'Die Feier', h:'Verleihung an Weihnachten.',
+     p:'HSC II Weihnachtsfeier, Kleingartenverein am Oelpfad, Oelpfad 3, 59439 Holzwickede. Das Bierlondor gibt es zum 4. Mal.',
+     art:'<div class="ob-steps">'+
+       [['&#9201;','04.12.2026 · Beginn 18:00 Uhr'],['&#10052;','Motto: Weihnachtssweater'],['&#127942;','Gewinnspiel: Bestes Outfit gewinnt eine Verzehrkarte']].map((t,i)=>'<div class="ob-st" style="--d:'+(0.15+i*0.35)+'s"><b>'+t[0]+'</b><span>'+t[1]+'</span></div>').join('')+'</div>'},
+    {k:'So geht’s', h:'Drei Schritte, fertig.',
+     p:'Erst sagst du, wer du bist. Dann wählst du pro Kategorie einen Favoriten. Am Ende schickst du alles ab.',
+     art:'<div class="ob-steps">'+
+       ['Wer bist du?','Favoriten wählen','Abschicken'].map((t,i)=>'<div class="ob-st" style="--d:'+(0.15+i*0.35)+'s"><b>'+(i+1)+'</b><span>'+t+'</span></div>').join('')+'</div>'},
+    {k:'Deine Wahl', h:'Einfach antippen.',
+     p:'Ein Tipp auf das Foto wählt den Spieler. Mit der Suche findest du jeden sofort. Ändern geht jederzeit.',
+     art:'<div class="ob-tiles">'+[0,1,2].map(i=>'<div class="ob-tile'+(i===1?' pick':'')+'"><i></i>'+(i===1?'<span class="chk">&#10003;</span>':'')+'</div>').join('')+'<div class="ob-hand"></div></div>'},
+    {k:'Fair & geheim', h:'Eine Stimme pro Person.',
+     p:'Niemand sieht Zwischenstände. Die Gewinner werden erst bei der Preisverleihung verkündet.',
+     art:'<div class="ob-lock"><img src="pokal-klein.webp" alt=""><div class="ob-ring"></div><div class="ob-ring r2"></div></div>'}
+  ];
+  const sl = slides[S.ob], last = S.ob === slides.length - 1;
+  return '<div class="onb">'+
+    '<div class="ob-art">'+sl.art+'</div>'+
+    '<div class="kicker">'+sl.k+'</div><h2>'+sl.h+'</h2><p class="lead">'+sl.p+'</p>'+
+    '<div class="dots">'+slides.map((_,i)=>'<button type="button" data-act="dot" data-k="'+i+'" class="'+(i===S.ob?'on':'')+'" aria-label="Seite '+(i+1)+'"></button>').join('')+'</div>'+
+    '<div class="nav"><button type="button" class="ghost" data-act="'+(S.ob===0?'obskip':'obback')+'">'+(S.ob===0?'Überspringen':'Zurück')+'</button>'+
+    '<button type="button" class="btn" data-act="obnext">'+(last?'Abstimmung starten':'Weiter')+'</button></div></div>';
 }
 function roleHTML(){
   return '<div class="kicker">Schritt 1</div><h2>Wer bist du?</h2>'+
@@ -287,27 +441,60 @@ function whoHTML(){
     '<p class="msg" role="alert">'+esc(S.err)+'</p>'+
     '<div class="nav"><button type="button" class="ghost" data-act="back">Zurück</button><button type="button" class="btn" data-act="next">Weiter</button></div>';
 }
+const fold = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss');
+const fold2 = s => s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+function applySearch(q){
+  const toks = fold(q).split(/\s+/).filter(Boolean);
+  let shown = 0;
+  document.querySelectorAll('.tile,.quote').forEach(t => {
+    const hay = t.dataset.n;
+    const ok = toks.every(k => hay.includes(k));
+    t.hidden = !ok; if (ok) shown++;
+  });
+  const e = $('noHit'); if (e) e.hidden = shown > 0;
+}
+const spLabel = q => q.lines.map(l => l[0]+': „'+l[1]+'“').join(' / ');
+const isQuote = c => c.id === 'spruch';
+function quoteHTML(c, q, cur){
+  const v = spLabel(q);
+  const hay = fold(v+' '+q.date+' '+(q.note||''))+' '+fold2(v);
+  const body = q.lines.map(l => '<span class="qm"><b>'+esc(l[0])+':</b> „'+esc(l[1])+'“</span>').join('');
+  return '<button type="button" class="quote" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(v)+'" data-n="'+esc(hay)+'" aria-pressed="'+(cur===v)+'">'+body+
+    '<span class="qd">'+esc(q.date+'2026'+(q.note?' · '+q.note:''))+'</span><span class="chk" aria-hidden="true">&#10003;</span></button>';
+}
+const initials = n => n.split(' ').filter(w => /^[A-ZÄÖÜ]/.test(w)).map(w => w[0]).slice(0,2).join('');
+function optHTML(c, p, cur){
+  const img = CONFIG.photos[p];
+  const a = 'type="button" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(p)+'" data-n="'+esc(fold(p)+' '+fold2(p))+'" aria-pressed="'+(cur===p)+'"';
+  if (img) return '<button class="tile" '+a+' aria-label="'+esc(p)+'"><img src="'+esc(img)+'" alt="" loading="lazy" decoding="async"><span class="chk" aria-hidden="true">&#10003;</span></button>';
+  return '<button class="tile ph" '+a+'><b>'+esc(initials(p))+'</b><span>'+esc(p)+'</span><span class="chk" aria-hidden="true">&#10003;</span></button>';
+}
 function catHTML(c, idx){
   const cur = S.picks[c.id];
   return '<div class="kicker">Kategorie '+(idx+1)+' von '+CONFIG.categories.length+'</div><h2>'+esc(c.name)+'</h2>'+
     '<p class="lead">'+esc(c.hint||'')+'</p>'+
-    '<div class="grid">'+optionsFor(c).map(p => '<button type="button" class="opt" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(p)+'" aria-pressed="'+(cur===p)+'">'+esc(p)+'</button>').join('')+'</div>'+
+    '<input type="search" id="fSearch" class="search" placeholder="'+(isQuote(c)?'Spruch suchen':'Spieler suchen')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Suchen">'+
+    (isQuote(c) ? '<div class="qlist">'+CONFIG.sprueche.map(q => quoteHTML(c, q, cur)).join('')+'</div>'
+                : '<div class="grid">'+optionsFor(c).map(p => optHTML(c, p, cur)).join('')+'</div>')+
+    '<p class="small" id="noHit" hidden>'+(isQuote(c)?'Kein Spruch gefunden.':'Kein Spieler gefunden.')+'</p>'+
     '<p class="msg" role="alert">'+esc(S.err)+'</p>'+
     '<div class="nav"><button type="button" class="ghost" data-act="back">Zurück</button><button type="button" class="btn" data-act="next">Weiter</button></div>';
 }
 function reviewHTML(){
   const rows = CONFIG.categories.map((c,k) =>
-    '<button type="button" data-act="jump" data-i="'+(3+k)+'"><span>'+esc(c.name)+'</span><b>'+esc(S.picks[c.id]||'')+'</b></button>').join('');
+    '<button type="button" data-act="jump" data-i="'+(iCat+k)+'"><span>'+esc(c.name)+'</span><b>'+esc(S.picks[c.id]||'')+'</b></button>').join('');
   return '<div class="kicker">Fast fertig</div><h2>Alles richtig?</h2>'+
     '<p class="lead">Tippe auf eine Zeile, um die Wahl zu ändern.</p>'+
-    '<div class="sum"><button type="button" data-act="jump" data-i="2"><span>'+roleLabel(S.role)+'</span><b>'+esc(who())+'</b></button>'+rows+'</div>'+
+    '<div class="sum"><button type="button" data-act="jump" data-i="'+iWho+'"><span>'+roleLabel(S.role)+'</span><b>'+esc(who())+'</b></button>'+rows+'</div>'+
     '<p class="msg" role="alert">'+esc(S.err)+'</p>'+
     '<div class="nav"><button type="button" class="ghost" data-act="back">Zurück</button><button type="button" class="btn" data-act="submit"'+(S.busy?' disabled':'')+'>Abschicken</button></div>';
 }
 function doneHTML(was){
-  return '<div class="done step" style="animation:none">'+'<img class="logo" src="pokal-logo.png" alt="">'+
+  return '<div class="done step" style="animation:none">'+'<img class="logo" src="pokal-klein.webp" alt="">'+
     '<h2>'+(was ? 'Schon dabei' : 'Danke, '+esc(who()))+'</h2>'+
-    '<p class="lead">'+(was ? 'Von diesem Gerät wurde schon abgestimmt.' : 'Deine Stimme ist gespeichert.')+' Das Ergebnis gibt es bei der Preisverleihung.</p></div>';
+    '<p class="lead">'+(was ? 'Von diesem Gerät wurde schon abgestimmt.' : 'Deine Stimme ist gespeichert.')+' Das Ergebnis gibt es bei der Preisverleihung.</p>'+
+    '<div class="endcard"><div class="kicker">Save the Date</div><b>BierlonDor Award Show</b><span>04.12.2026 · 18:00 Uhr<br>bei der HSC II Weihnachtsfeier</span>'+
+    '<span class="gw"><i>Gewinnspiel</i> Motto Weihnachtssweater: Das beste Outfit gewinnt eine Verzehrkarte!</span></div></div>';
 }
 
 function render(){
@@ -316,16 +503,16 @@ function render(){
   if (id === 'intro') html = introHTML();
   else if (id === 'role') html = roleHTML();
   else if (id === 'who') html = whoHTML();
-  else if (id.startsWith('cat:')) { const k = S.i - 3; html = catHTML(CONFIG.categories[k], k); }
+  else if (id.startsWith('cat:')) { const k = S.i - iCat; html = catHTML(CONFIG.categories[k], k); }
+  else if (id === 'onb') html = onbHTML();
   else if (id === 'review') html = reviewHTML();
   else html = doneHTML(S.was);
   $('stage').innerHTML = '<div class="step">'+html+'</div>';
-  const hide = id === 'intro' || id === 'done';
+  const hide = id === 'intro' || id === 'onb' || id === 'done';
   $('top').dataset.hide = hide ? '1' : '0';
-  $('barI').style.width = Math.round((S.i - 1) / (steps.length - 3) * 100) + '%';
-  window.scrollTo(0, 0);
+  $('barI').style.width = Math.round((S.i - iRole) / (steps.length - iRole - 2) * 100) + '%';
 }
-function go(i){ S.i = Math.max(0, Math.min(steps.length-1, i)); S.err = ''; render(); }
+function go(i){ S.i = Math.max(0, Math.min(steps.length-1, i)); S.err = ''; render(); window.scrollTo(0, 0); }
 
 function readInputs(){
   const sf = $('fSelf'), nf = $('fName');
@@ -343,7 +530,7 @@ async function next(){
     } catch(e){}
     Object.keys(S.picks).forEach(k => { if (S.picks[k] === S.self && S.role === 'spieler') delete S.picks[k]; });
   }
-  if (id.startsWith('cat:') && !S.picks[id.slice(4)]) { S.err = 'Bitte wähle eine Person aus.'; return render(); }
+  if (id.startsWith('cat:') && !S.picks[id.slice(4)]) { S.err = id==='cat:spruch' ? 'Bitte wähle einen Spruch aus.' : 'Bitte wähle eine Person aus.'; return render(); }
   go(S.i + 1);
 }
 async function submit(){
@@ -351,13 +538,14 @@ async function submit(){
   S.busy = true; S.err = ''; render();
   try {
     await api.submit({name:who(), role:S.role, picks:S.picks});
-    try { localStorage.setItem('bod_voted','1'); } catch(e){}
+    try { localStorage.setItem('bod_voted', who()); } catch(e){}
     S.busy = false; S.was = false; go(steps.length - 1);
   } catch(e){
     S.busy = false; S.err = e.message || 'Das hat nicht geklappt.'; render();
   }
 }
 
+$('stage').addEventListener('input', e => { if (e.target.id === 'fSearch') applySearch(e.target.value); });
 $('stage').addEventListener('change', e => {
   if (e.target.id === 'fSelf') { S.self = e.target.value; S.err = ''; const m = document.querySelector('.msg'); if (m) m.textContent = ''; }
 });
@@ -366,11 +554,53 @@ $('stage').addEventListener('click', e => {
   const a = b.dataset.act;
   if (a === 'next') next();
   else if (a === 'back') { readInputs(); go(S.i - 1); }
-  else if (a === 'role') { S.role = b.dataset.v; S.err = ''; render(); setTimeout(() => go(2), 220); }
-  else if (a === 'pick') { S.picks[b.dataset.cat] = b.dataset.v; S.err = ''; render(); }
+  else if (a === 'role') { S.role = b.dataset.v; S.err = ''; render(); setTimeout(() => go(iWho), 220); }
+  else if (a === 'pick') {
+    S.picks[b.dataset.cat] = b.dataset.v; S.err = '';
+    document.querySelectorAll('.tile,.quote').forEach(t => t.setAttribute('aria-pressed', String(t === b)));
+    const m = document.querySelector('.msg'); if (m) m.textContent = '';
+  }
+  else if (a === 'obnext') { if (S.ob < 3) { S.ob++; render(); } else go(iRole); }
+  else if (a === 'obback') { if (S.ob > 0) { S.ob--; render(); } else go(S.i - 1); }
+  else if (a === 'obskip') go(iRole);
+  else if (a === 'dot') { S.ob = parseInt(b.dataset.k, 10); render(); }
   else if (a === 'jump') go(parseInt(b.dataset.i, 10));
+  else if (a === 'pokal') pokalTap(b);
   else if (a === 'submit') submit();
 });
+
+/* ---------- Pokal antippen: drehen, Konfetti, Spruch ---------- */
+const POKAL_SPRUECHE = ["Prost!", "Noch nicht gewonnen. Erst abstimmen!", "Finger weg vom Pokal!", "Der Ausredenweltmeister war's.", "Vorsicht, der ist schwer.", "Den will jeder haben."];
+let pokalN = 0, fxRaf = 0;
+function confetti(x, y){
+  let cv = $('fx');
+  if (!cv) { cv = document.createElement('canvas'); cv.id = 'fx'; document.body.appendChild(cv); }
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+  const g = cv.getContext('2d'); g.scale(dpr, dpr);
+  const cols = ['#e3ab28','#f4c85a','#ffffff','#6f8092','#b57c00'];
+  const ps = Array.from({length:70}, () => {
+    const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 7;
+    return {x, y, vx:Math.cos(a) * v, vy:Math.sin(a) * v - 4, w:5 + Math.random() * 6, h:3 + Math.random() * 4, r:Math.random() * 6, vr:(Math.random() - .5) * .4, c:cols[Math.floor(Math.random() * cols.length)]};
+  });
+  cancelAnimationFrame(fxRaf);
+  let t = 0;
+  const step = () => {
+    t++; g.clearRect(0, 0, innerWidth, innerHeight);
+    ps.forEach(p => { p.vy += .28; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      g.save(); g.globalAlpha = Math.max(0, 1 - t / 95); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); g.restore(); });
+    if (t < 95) fxRaf = requestAnimationFrame(step); else g.clearRect(0, 0, innerWidth, innerHeight);
+  };
+  fxRaf = requestAnimationFrame(step);
+}
+function pokalTap(btn){
+  const img = btn.querySelector('.pokal'), r = btn.getBoundingClientRect();
+  img.classList.remove('spin'); void img.offsetWidth; img.classList.add('spin');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) confetti(r.left + r.width / 2, r.top + r.height * 0.45);
+  const t = $('pokalTxt'); if (t) t.textContent = POKAL_SPRUECHE[pokalN % POKAL_SPRUECHE.length];
+  pokalN++;
+}
 
 /* ---------- Admin (Zahnrad + Passwort) ---------- */
 const ov = $('overlay');
@@ -391,25 +621,72 @@ $('gear').addEventListener('click', () => {
     catch(e){ $('aerr').textContent = e.message; $('ago').disabled = false; }
   };
 });
-let armed = null;
+let armed = null, aF = 'alle';
 function showAdmin(pw, votes){
   votes = (votes || []).slice().sort((a,b) => new Date(b.ts) - new Date(a.ts));
   const names = {}; votes.forEach(v => { const k = String(v.name).toLowerCase(); names[k] = (names[k]||0)+1; });
-  const res = CONFIG.categories.map(c => {
-    const n = {}; votes.forEach(v => { const p = v.picks && v.picks[c.id]; if (p) n[p] = (n[p]||0)+1; });
+  const vf = votes.filter(v => aF === 'alle' || v.role === aF);
+  const tal = CONFIG.categories.map(c => {
+    const n = {}; vf.forEach(v => { const p = v.picks && v.picks[c.id]; if (p) n[p] = (n[p]||0)+1; });
     const list = Object.entries(n).sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0]));
-    const max = list.length ? list[0][1] : 1;
-    return '<div class="res"><h4>'+esc(c.name)+'</h4>'+(list.length ? '' : '<p class="small">Noch keine Stimmen.</p>')+
-      list.map(([p,k],i) => '<div class="tally'+(i===0?' top':'')+'"><span>'+esc(p)+'</span><span>'+k+'</span><span class="b"><i style="width:'+Math.round(k/max*100)+'%"></i></span></div>').join('')+'</div>';
-  }).join('');
+    const total = list.reduce((x,y) => x + y[1], 0);
+    const top = list.length ? list[0][1] : 0;
+    return {c, list, total, top, win: list.filter(e => e[1] === top).map(e => e[0])};
+  });
+  const pct = (k,t) => t ? Math.round(k/t*100)+'%' : '';
+  const winners = '<div class="res win"><h4>Gewinner</h4>'+tal.map(t =>
+    '<div class="wrow"><small>'+esc(t.c.name)+'</small>'+(t.total
+      ? '<b>'+t.win.map(esc).join(' &amp; ')+'</b><span>'+(t.win.length>1 ? '<em>Gleichstand</em> · ':'')+t.top+' von '+t.total+' Stimmen ('+pct(t.top,t.total)+')</span>'
+      : '<span>Noch keine Stimmen</span>')+'</div>').join('')+
+    '<div class="arow"><button type="button" class="ghost" id="acopy">Ergebnis kopieren</button><button type="button" class="ghost" id="acsv">Auswertung als CSV</button></div></div>';
+  const res = tal.map(t =>
+    '<div class="res"><h4>'+esc(t.c.name)+'</h4>'+(t.list.length ? '' : '<p class="small">Noch keine Stimmen.</p>')+
+    t.list.map(([p,k],i) => '<div class="tally'+(k===t.top?' top':'')+'"><span>'+esc(p)+'</span><span>'+k+' · '+pct(k,t.total)+'</span><span class="b"><i style="width:'+Math.round(k/(t.top||1)*100)+'%"></i></span></div>').join('')+'</div>').join('');
+  const chips = '<div class="chips">'+[['alle','Alle'],['spieler','Nur Spieler'],['fan','Nur Fans']].map(([k,l]) => '<button type="button" data-f="'+k+'" class="'+(aF===k?'on':'')+'">'+l+'</button>').join('')+'</div>';
   const fmt = t => { try { return new Date(t).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch(e){ return ''; } };
   const rows = votes.map(v => '<tr><td class="'+(names[String(v.name).toLowerCase()]>1?'dup':'')+'">'+esc(v.name)+'</td><td>'+roleLabel(v.role)+'</td><td>'+esc(fmt(v.ts))+'</td><td><button type="button" class="del" data-del="'+esc(v.id)+'">'+(armed===v.id?'Sicher?':'Löschen')+'</button></td></tr>').join('');
   ov.innerHTML = '<div class="sheet wide"><div class="row"><h3>Auswertung</h3><button type="button" class="ghost" id="aout">Schließen</button></div>'+
     (LIVE ? '' : '<span class="tag">Demo-Daten aus diesem Browser</span>')+
     '<div class="stat"><div><b>'+votes.length+'</b><small>Stimmen</small></div><div><b>'+votes.filter(v=>v.role==='spieler').length+'</b><small>Spieler</small></div><div><b>'+votes.filter(v=>v.role==='fan').length+'</b><small>Fans</small></div></div>'+
-    res+
+    chips+winners+res+
     '<div class="res"><h4>Wer hat abgestimmt</h4><p class="small">Gleiche Namen sind rot. Nach dem Löschen kann die Person neu abstimmen.</p><div class="tbox"><table><thead><tr><th>Name</th><th>Rolle</th><th>Zeit</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
     '<button type="button" class="btn full" id="aref">Aktualisieren</button></div>';
+  ov.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { aF = b.dataset.f; showAdmin(pw, votes); });
+  $('acopy').onclick = async (e) => {
+    const txt = 'BIERLOND\'OR '+CONFIG.year+' – Ergebnisse ('+({alle:'alle',spieler:'nur Spieler',fan:'nur Fans'}[aF])+')\n\n'+
+      tal.map(t => t.c.name+': '+(t.total ? t.win.join(' & ')+(t.win.length>1?' (Gleichstand)':'')+' – '+t.top+' von '+t.total : 'keine Stimmen')).join('\n');
+    try { await navigator.clipboard.writeText(txt); e.target.textContent = 'Kopiert'; } catch(_) { window.prompt('Kopieren:', txt); }
+  };
+  $('acsv').onclick = () => {
+    const q = x => '"'+String(x==null?'':x).replace(/"/g,'""')+'"';
+    const line = arr => arr.map(q).join(';');
+    const nS = votes.filter(v => v.role === 'spieler').length, nF = votes.filter(v => v.role === 'fan').length;
+    const out = [];
+    out.push(line(["BIERLOND'OR "+CONFIG.year+" – Auswertung"]));
+    out.push(line(['Stimmen gesamt', votes.length, 'Spieler', nS, 'Fans', nF]));
+    out.push('');
+    out.push(line(['Kategorie','Platz','Name','Stimmen gesamt','Anteil %','Davon Spieler','Davon Fans','Stimmen in Kategorie']));
+    CONFIG.categories.forEach(c => {
+      const n = {};
+      votes.forEach(v => { const p = v.picks && v.picks[c.id]; if (!p) return; (n[p] = n[p] || {t:0,s:0,f:0}).t++; if (v.role === 'spieler') n[p].s++; else n[p].f++; });
+      const list = Object.entries(n).sort((x,y) => y[1].t - x[1].t || x[0].localeCompare(y[0]));
+      const total = list.reduce((x,y) => x + y[1].t, 0);
+      if (!list.length) { out.push(line([c.name,'','keine Stimmen',0,'',0,0,0])); return; }
+      let rank = 0, prev = -1;
+      list.slice(0,5).forEach(([name,d],i) => {
+        if (d.t !== prev) { rank = i + 1; prev = d.t; }
+        out.push(line([c.name, rank, name, d.t, String(Math.round(d.t/total*1000)/10).replace('.',','), d.s, d.f, total]));
+      });
+      const w = list.filter(e => e[1].t === list[0][1].t);
+      if (w.length > 1) out.push(line([c.name,'','Hinweis: Gleichstand auf Platz 1 ('+w.length+' Beteiligte)','','','','','']));
+    });
+    out.push(''); out.push('');
+    out.push(line(['Einzelstimmen']));
+    out.push(line(['Name','Rolle','Zeit'].concat(CONFIG.categories.map(c => c.name))));
+    votes.forEach(v => out.push(line([v.name, v.role === 'spieler' ? 'Spieler' : 'Fan', v.ts].concat(CONFIG.categories.map(c => (v.picks||{})[c.id]||'')))));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿'+out.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+    a.download = 'bierlondor-auswertung.csv'; document.body.appendChild(a); a.click(); a.remove();
+  };
   $('aout').onclick = () => { armed = null; closeOv(); };
   $('aref').onclick = async () => { try { showAdmin(pw, await api.results(pw)); } catch(e){ closeOv(); } };
   ov.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
@@ -421,6 +698,15 @@ function showAdmin(pw, votes){
 }
 
 /* ---------- Start ---------- */
-if (alreadyVoted()) { S.was = true; S.i = steps.length - 1; }
-render();
+/* Die Datenbank entscheidet: Wurde die Stimme gelöscht, darf man wieder abstimmen. */
+async function boot(){
+  const n = votedName();
+  if (n && n !== '1') {
+    try {
+      if (await api.hasVoted(n)) { S.was = true; S.i = steps.length - 1; } else clearVoted();
+    } catch(e){ clearVoted(); }
+  } else if (n) clearVoted();
+  render();
+}
+boot();
 </script>
