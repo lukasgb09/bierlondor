@@ -272,7 +272,8 @@ const CONFIG = {
     {date:"07.07.", lines:[["Burner","Wie, es gibt kein Bier mehr? Ich lass mich doch nicht anderthalb Stunden ficken und bekomm dann kein Bier."]]},
     {date:"04.10.", lines:[["Bene's Schwiegervater","Brot kann schimmeln, was kann Bene?"]]},
     {date:"04.10.", lines:[["Hendrik","Schiri, das ist ein Kontaktsport!"]]},
-    {date:"08.11.", lines:[["Carsten","Geh von der Box weg, das stört den Ton."],["Pöppi","Ich will doch nur ein bisschen Vibration spüren."]]}
+    {date:"08.11.", lines:[["Carsten","Geh von der Box weg, das stört den Ton."],["Pöppi","Ich will doch nur ein bisschen Vibration spüren."]]},
+    {date:"", lines:[["Knauf über Bene","Er will nur nicht mit ihm spielen, weil er noch nicht mit ihm auf der Bierzeltgarnitur saß"]]}
   ],
   photos: {
     "Adin Beganovic": "fotos/adin-beganovic.webp",
@@ -530,7 +531,7 @@ function quoteHTML(c, q, cur){
   const hay = fold(v+' '+q.date+' '+(q.note||''))+' '+fold2(v);
   const body = q.lines.map(l => '<span class="qm"><b>'+esc(l[0])+':</b> „'+esc(l[1])+'“</span>').join('');
   return '<button type="button" class="quote" data-act="pick" data-cat="'+esc(c.id)+'" data-v="'+esc(v)+'" data-n="'+esc(hay)+'" aria-pressed="'+(cur===v)+'">'+body+
-    '<span class="qd">'+esc(q.date+'2026'+(q.note?' · '+q.note:''))+'</span><span class="chk" aria-hidden="true">&#10003;</span></button>';
+    (q.date||q.note ? '<span class="qd">'+esc((q.date ? q.date+'2026' : '')+(q.date&&q.note?' · ':'')+(q.note||''))+'</span>' : '')+'<span class="chk" aria-hidden="true">&#10003;</span></button>';
 }
 const initials = n => n.split(' ').filter(w => /^[A-ZÄÖÜ]/.test(w)).map(w => w[0]).slice(0,2).join('');
 function optHTML(c, p, cur){
@@ -710,7 +711,7 @@ function showAdmin(pw, votes){
     '<div class="wrow"><small>'+esc(t.c.name)+'</small>'+(t.total
       ? '<b>'+t.win.map(esc).join(' &amp; ')+'</b><span>'+(t.win.length>1 ? '<em>Gleichstand</em> · ':'')+t.top+' von '+t.total+' Stimmen ('+pct(t.top,t.total)+')</span>'
       : '<span>Noch keine Stimmen</span>')+'</div>').join('')+
-    '<div class="arow"><button type="button" class="ghost" id="acopy">Ergebnis kopieren</button><button type="button" class="ghost" id="acsv">Auswertung als CSV</button></div></div>';
+    '<div class="arow"><button type="button" class="ghost" id="acopy">Ergebnis kopieren</button><button type="button" class="ghost" id="acsv">Auswertung als CSV</button></div><button type="button" class="btn full" id="ashow" style="margin-top:8px">Show-Daten laden (für die Präsentation)</button></div>';
   const res = tal.map(t =>
     '<div class="res"><h4>'+esc(t.c.name)+'</h4>'+(t.list.length ? '' : '<p class="small">Noch keine Stimmen.</p>')+
     t.list.map(([p,k],i) => '<div class="tally'+(k===t.top?' top':'')+'"><span>'+esc(p)+'</span><span>'+k+' · '+pct(k,t.total)+'</span><span class="b"><i style="width:'+Math.round(k/(t.top||1)*100)+'%"></i></span></div>').join('')+'</div>').join('');
@@ -728,6 +729,17 @@ function showAdmin(pw, votes){
     const txt = 'BIERLOND\'OR '+CONFIG.year+' – Ergebnisse ('+({alle:'alle',spieler:'nur Spieler',fan:'nur Fans'}[aF])+')\n\n'+
       tal.map(t => t.c.name+': '+(t.total ? t.win.join(' & ')+(t.win.length>1?' (Gleichstand)':'')+' – '+t.top+' von '+t.total : 'keine Stimmen')).join('\n');
     try { await navigator.clipboard.writeText(txt); e.target.textContent = 'Kopiert'; } catch(_) { window.prompt('Kopieren:', txt); }
+  };
+  $('ashow').onclick = () => {
+    const cats = CONFIG.categories.map(c => {
+      const n = {};
+      votes.forEach(v => { const p = v.picks && v.picks[c.id]; if (!p) return; const d = n[p] || (n[p] = {l:p,t:0,s:0,f:0}); d.t++; if (v.role === 'spieler') d.s++; else d.f++; });
+      const list = Object.values(n).sort((a,b) => b.t - a.t || a.l.localeCompare(b.l,'de'));
+      return {id:c.id, name:c.name, hint:c.hint||'', total:list.reduce((x,y) => x + y.t, 0), list};
+    });
+    const data = {app:'bierlondor-show', version:1, year:CONFIG.year, total:votes.length, spieler:votes.filter(v => v.role==='spieler').length, fans:votes.filter(v => v.role==='fan').length, cats};
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
+    a.download = 'ergebnisse.json'; document.body.appendChild(a); a.click(); a.remove();
   };
   $('acsv').onclick = () => {
     const q = x => '"'+String(x==null?'':x).replace(/"/g,'""')+'"';
